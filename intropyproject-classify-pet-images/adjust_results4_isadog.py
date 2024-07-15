@@ -54,8 +54,7 @@ def adjust_results4_isadog(results_dic, dogfile):
                  NEW - index 3 = 1/0 (int)  where 1 = pet image 'is-a' dog and 
                             0 = pet Image 'is-NOT-a' dog. 
                  NEW - index 4 = 1/0 (int)  where 1 = Classifier classifies image 
-                            'as-a' dog and 0 = Classifier classifies image  
-                            'as-NOT-a' dog.
+                            'as-a' dog and 0 = Classifier classifies image  'as-NOT-a' dog.
      dogfile - A text file that contains names of all dogs from the classifier
                function and dog names from the pet image files. This file has 
                one dog name per line dog names are all in lowercase with 
@@ -67,4 +66,19 @@ def adjust_results4_isadog(results_dic, dogfile):
     Returns:
            None - results_dic is mutable data type so no return needed.
     """           
-    None
+    with open(dogfile, 'r') as file:
+        dog_names = [line.strip() for line in file.readlines()]
+    
+    # Create a set for faster look-up
+    dog_names_set = set(dog_names)
+
+    # Iterate through results_dic to classify pet images and classifiers as dogs
+    for key in results_dic:
+        pet_label = results_dic[key][0].lower()  # Get pet image label
+        classifier_label = results_dic[key][1].lower()  # Get classifier label
+        
+        # Check if pet label is a dog
+        results_dic[key].append(1 if any(dog in pet_label for dog in dog_names_set) else 0)
+        
+        # Check if classifier label is a dog
+        results_dic[key].append(1 if any(dog in classifier_label for dog in dog_names_set) else 0)
